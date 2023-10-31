@@ -1,9 +1,5 @@
 locals {
-  network = data.terraform_remote_state.network.outputs.network_self_link
-
-  private_subnet_secondary_pod = data.terraform_remote_state.network.outputs.subnets_secondary_ranges_private[1]
-  private_subnet_secondary_svc = data.terraform_remote_state.network.outputs.subnets_secondary_ranges_private[2]
-
+  network                           = data.terraform_remote_state.network.outputs.network_self_link
   gcp_private_service_access_ranges = data.terraform_remote_state.network.outputs.subnets_gcp_private_service_access_ranges
 
   common_labels = {

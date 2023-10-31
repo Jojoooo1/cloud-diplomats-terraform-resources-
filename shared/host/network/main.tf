@@ -1,6 +1,6 @@
 locals {
 
-  vpc_name = "vpc-dev"
+  vpc_name = "cloud-dpl-vpc-dev"
 
   common_labels = {
     owned-by   = "platform"
@@ -25,7 +25,7 @@ module "vpc" {
 
   subnets = [
     {
-      subnet_name               = "us-east1-dev-public"
+      subnet_name               = "${local.vpc_name}-${var.region}-public"
       subnet_ip                 = "10.0.0.0/19"
       subnet_region             = "us-east1"
       subnet_private_access     = "true"
@@ -35,7 +35,7 @@ module "vpc" {
       subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
     },
     {
-      subnet_name               = "us-east1-dev-private"
+      subnet_name               = "${local.vpc_name}-${var.region}-private"
       subnet_ip                 = "10.0.32.0/19"
       subnet_region             = "us-east1"
       subnet_private_access     = "true"
@@ -50,31 +50,31 @@ module "vpc" {
   # Some use cases, such as container-based workloads, can require additional aggregates. These need to be defined as subnet secondary ranges. 
   # For these cases, you can use address ranges that are taken from the reserved RFC 6598 (Shared Address Space address range 100.64.0.0/10 -> 100.64.0.0 until 100.127.255.255).
   secondary_ranges = {
-    us-east1-dev-public = [
+    "${local.vpc_name}-${var.region}-public" = [
       {
-        range_name    = "us-east1-dev-public-secondary"
+        range_name    = "${local.vpc_name}-${var.region}-public-secondary"
         ip_cidr_range = "100.64.0.0/19"
       },
       {
-        range_name    = "us-east1-dev-public-secondary-gke-pod"
+        range_name    = "${local.vpc_name}-${var.region}-public-secondary-gke-pod"
         ip_cidr_range = "100.64.32.0/19",
       },
       {
-        range_name    = "us-east1-dev-public-secondary-gke-svc"
+        range_name    = "${local.vpc_name}-${var.region}-public-secondary-gke-svc"
         ip_cidr_range = "100.64.64.0/19",
       },
     ]
-    us-east1-dev-private = [
+    "${local.vpc_name}-${var.region}-private" = [
       {
-        range_name    = "us-east1-dev-private-secondary"
+        range_name    = "${local.vpc_name}-${var.region}-private-secondary"
         ip_cidr_range = "100.65.0.0/19"
       },
       {
-        range_name    = "us-east1-dev-private-secondary-gke-pod"
+        range_name    = "${local.vpc_name}-${var.region}-private-secondary-gke-pod"
         ip_cidr_range = "100.65.32.0/19",
       },
       {
-        range_name    = "us-east1-dev-private-secondary-gke-svc"
+        range_name    = "${local.vpc_name}-${var.region}-private-secondary-gke-svc"
         ip_cidr_range = "100.65.64.0/19",
       },
     ]
@@ -124,12 +124,12 @@ resource "google_compute_router_nat" "vpc_nat" {
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
   subnetwork {
-    name                    = module.vpc.subnets["us-east1/us-east1-dev-public"].self_link
+    name                    = module.vpc.subnets["${var.region}/${local.vpc_name}-${var.region}-public"].self_link
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
 
   subnetwork {
-    name                    = module.vpc.subnets["us-east1/us-east1-dev-private"].self_link
+    name                    = module.vpc.subnets["${var.region}/${local.vpc_name}-${var.region}-private"].self_link
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
 

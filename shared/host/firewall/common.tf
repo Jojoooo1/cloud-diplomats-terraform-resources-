@@ -9,7 +9,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 5.4.0"
+      version = ">= 5.4"
     }
   }
 }
@@ -19,6 +19,6 @@ data "terraform_remote_state" "network" {
 
   config = {
     bucket = "tf-state-19590"
-    prefix = "terraform/state/network/shared-host"
+    prefix = "terraform/state/network/shared-vpc"
   }
 }

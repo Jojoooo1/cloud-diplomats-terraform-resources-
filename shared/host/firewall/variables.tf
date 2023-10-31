@@ -8,7 +8,6 @@ variable "region" {
   type        = string
 }
 
-# https://kubernetes.github.io/ingress-nginx/deploy/#gce-gke
 variable "gke_master_ipv4_cidr_blocks" {
   description = "ipv4 cidr blocks to allow communication between nginx webhook admission and master node for private cluster"
   type        = list(string)

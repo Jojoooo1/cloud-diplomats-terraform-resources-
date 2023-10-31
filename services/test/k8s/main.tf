@@ -99,12 +99,12 @@ module "gke" {
   node_pools_tags = {
     "all" : [
       "allow-ssh-from-iap",
-      "allow-all-egress", # Necessary for LB
+      "allow-all-egress",
 
       # Those are necessary since GCP service project does not have permission to create firewall rules automatically
-      "allow-k8s-lb-ingress",
-      "allow-k8s-lb-health-check",
-      "allow-k8s-ingress-nginx-webhook-admission"
+      "allow-http-ingress",
+      "allow-lb-health-check-from-gcp",
+      "allow-nginx-webhook-admission-from-k8s-master"
     ],
     "default-node-pool" : []
   }
@@ -130,22 +130,22 @@ module "workload_identity_external_secrets_operator" {
   roles               = ["roles/secretmanager.secretAccessor"]
 }
 
-module "workload_identity_external_dns" {
-  source  = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version = "28.0.0"
+# module "workload_identity_external_dns" {
+#   source  = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
+#   version = "28.0.0"
 
-  project_id = var.project_id
+#   project_id = var.project_id
 
-  cluster_name = module.gke.name
-  location     = module.gke.location
+#   cluster_name = module.gke.name
+#   location     = module.gke.location
 
-  use_existing_k8s_sa = true
-  annotate_k8s_sa     = false
-  name                = "external-dns"
-  namespace           = "external-dns"
+#   use_existing_k8s_sa = true
+#   annotate_k8s_sa     = false
+#   name                = "external-dns"
+#   namespace           = "external-dns"
 
-  roles = []
-  additional_projects = {
-    "${var.project_dns_id}" : ["roles/dns.admin"]
-  }
-}
+#   roles = []
+#   additional_projects = {
+#     "${var.project_dns_id}" : ["roles/dns.admin"]
+#   }
+# }

@@ -101,6 +101,10 @@ module "gke" {
       "allow-ssh-from-iap",
       "allow-all-egress",
 
+      # VERIFY IF NEEDED
+      "allow-igw",
+
+
       # Those are necessary since GCP service project does not have permission to create firewall rules automatically
       "allow-http-ingress",
       "allow-lb-health-check-from-gcp",

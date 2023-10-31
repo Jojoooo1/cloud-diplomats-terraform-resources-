@@ -123,10 +123,10 @@ resource "google_compute_router_nat" "vpc_nat" {
 
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
-  subnetwork {
-    name                    = module.vpc.subnets["${var.region}/${local.vpc_name}-${var.region}-public"].self_link
-    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
-  }
+  # subnetwork {
+  #   name                    = module.vpc.subnets["${var.region}/${local.vpc_name}-${var.region}-public"].self_link
+  #   source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  # }
 
   subnetwork {
     name                    = module.vpc.subnets["${var.region}/${local.vpc_name}-${var.region}-private"].self_link

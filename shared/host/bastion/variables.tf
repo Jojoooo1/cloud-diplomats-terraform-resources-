@@ -12,3 +12,8 @@ variable "name" {
   description = "Host name of the bastion"
   type        = string
 }
+
+# variable "service_dev_project_id" {
+#   description = "Name "
+#   type        = string
+# }

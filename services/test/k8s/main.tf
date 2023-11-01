@@ -102,7 +102,7 @@ module "gke" {
       "allow-all-egress",
 
       # VERIFY IF NEEDED
-      "allow-igw",
+      # "allow-igw",
 
 
       # Those are necessary since GCP service project does not have permission to create firewall rules automatically

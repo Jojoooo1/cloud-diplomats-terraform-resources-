@@ -137,13 +137,14 @@ resource "google_compute_firewall" "allow_lb_health_check_from_gcp_ingress" {
   description = "Allow ingress traffic from GCP Load balancer health check (managed by terraform)"
 
   target_tags   = ["allow-lb-health-check-from-gcp"]
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "209.85.152.0/22", "209.85.204.0/22"]
 
   priority  = "1000"
   direction = "INGRESS"
 
   allow {
     protocol = "tcp"
+    # on all port because of NEG https://cloud.google.com/kubernetes-engine/docs/concepts/firewall-rules#gateway-fws
   }
 }
 

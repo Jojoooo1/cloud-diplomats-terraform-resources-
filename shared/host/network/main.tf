@@ -94,7 +94,7 @@ module "vpc" {
 }
 
 /******************************************
-  NAT Cloud Router & NAT config
+  NAT Cloud Router & NAT config (note: Cloud NAT implements outbound NAT in conjunction with a *DEFAULT ROUTE* to allow your instances to reach the internet => meaning you need to use the "allow-igw" tag)
  *****************************************/
 resource "google_compute_router" "vpc_router" {
   project = var.project_id

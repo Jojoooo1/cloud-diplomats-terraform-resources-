@@ -1,9 +1,9 @@
 
 locals {
   network        = data.terraform_remote_state.network.outputs.network_self_link
-  private_subnet = data.terraform_remote_state.network.outputs.subnets["us-east1/cl-dpl-us-east1-dev-private"].self_link
+  private_subnet = data.terraform_remote_state.network.outputs.subnets["us-east1/cloud-dpl-vpc-dev-us-east1-private"].self_link
 
-  service_dev_project_id = data.terraform_remote_state.dev_services.outputs.service_dev_project_id
+  # service_dev_project_id = var.service_dev_project_id
 
   common_labels = {
     owned-by   = "platform"
@@ -13,10 +13,9 @@ locals {
 }
 
 /******************************************
-  Bastion host 
+  Bastion host
   SSH: gcloud compute ssh --project="<your-project>" --zone="us-east1-b" bastion-host-dev --tunnel-through-iap
-  SQL: gcloud compute ssh --project="<your-project>" --zone="us-east1-b" bastion-host-dev --tunnel-through-iap -- '/usr/local/bin/cloud_sql_proxy --private-ip --address 0.0.0.0 <your-connection-name>'
-  psql: psql "host=10.100.0.6 dbname=api user=jonathan password=password"
+  SQL: gcloud compute ssh --project="<your-project>" --zone="us-east1-b" bastion-host-dev --tunnel-through-iap -- '/usr/local/bin/cloud_sql_proxy --private-ip --address 0.0.0.0 <your-connection-name>' 
  *****************************************/
 module "bastion_with_iap" {
   source  = "terraform-google-modules/bastion-host/google"
@@ -31,7 +30,8 @@ module "bastion_with_iap" {
   preemptible = true
 
   name                 = var.name
-  create_firewall_rule = false
+  service_account_name = var.name
+  create_firewall_rule = false # already create in the firewall folder
   machine_type         = "e2-micro"
   disk_size_gb         = 10
   startup_script       = <<-EOF
@@ -49,7 +49,7 @@ module "bastion_with_iap" {
     echo "****************************************************************"
     echo "installing Cloud SQL proxy:"
     echo "****************************************************************"
-    sudo wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.7.0/cloud-sql-proxy.linux.amd64 -O cloud_sql_proxy
+    sudo wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.7.1/cloud-sql-proxy.linux.amd64 -O cloud_sql_proxy
     sudo chmod +x cloud_sql_proxy
     sudo mv cloud_sql_proxy /usr/local/bin
 
@@ -65,20 +65,19 @@ module "bastion_with_iap" {
 
   EOF
 
-  service_account_name               = var.name
-  service_account_roles_supplemental = ["roles/cloudsql.client"]
-  members = [
-    "user:jonathan.chevalier@cloud-diplomate.com"
-  ]
+  # Necessary if your user does not have the tunnelResourceAccessor roles.
+  # members = [
+  #   "user:jonathan@cloud-diplomats.com" 
+  # ]
 
   labels = local.common_labels
-  tags   = ["allow-ssh-from-iap", "allow-all-egress"]
+  tags   = ["allow-igw", "allow-ssh-from-iap", "allow-all-egress"]
 }
 
-resource "google_project_iam_binding" "store_user" {
-  project = local.service_dev_project_id
-  role    = "roles/cloudsql.client"
-  members = [
-    "serviceAccount:${module.bastion_with_iap.service_account}"
-  ]
-}
+# resource "google_project_iam_binding" "store_user" {
+#   project = var.service_dev_project_id
+#   role    = "roles/cloudsql.client"
+#   members = [
+#     "serviceAccount:${module.bastion_with_iap.service_account}"
+#   ]
+# }

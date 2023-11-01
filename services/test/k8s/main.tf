@@ -98,11 +98,9 @@ module "gke" {
 
   node_pools_tags = {
     "all" : [
+      "allow-igw",
       "allow-ssh-from-iap",
       "allow-all-egress",
-
-      # VERIFY IF NEEDED
-      # "allow-igw",
 
 
       # Those are necessary since GCP service project does not have permission to create firewall rules automatically

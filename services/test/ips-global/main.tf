@@ -10,7 +10,6 @@ locals {
 /******************************************
   Regional IP configuration
  *****************************************/
-
 module "static_ip_global_argo" {
   source  = "terraform-google-modules/address/google"
   version = "3.1.3"

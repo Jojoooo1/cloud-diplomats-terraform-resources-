@@ -106,12 +106,16 @@ resource "google_compute_firewall" "allow_ssh_from_iap_ingress" {
   }
 }
 
+/******************************************
+  Firewall Ingress for GKE configuration
+ *****************************************/
 # https://cloud.google.com/kubernetes-engine/docs/concepts/firewall-rules
 # https://cloud.google.com/load-balancing/docs/https/setting-up-reg-ext-shared-vpc#configure_firewall_rules
+
+# Necessary for ingress-nginx, source traffic will go directly to the VMs as k8s Service of type Load Balancer creates a passthrough network load balancer
 resource "google_compute_firewall" "allow_http_ingress" {
   project = var.project_id
 
-  # necessary for kubernetes ingresses of type (Network). Nginx ingress for example.
   name        = "allow-http-ingress"
   network     = local.network
   description = "Allow HTTP traffic to reach instances or k8s node (managed by terraform)"
@@ -128,16 +132,27 @@ resource "google_compute_firewall" "allow_http_ingress" {
   }
 }
 
+# Necessary for ingress-gce, ingress-nginx and NEGs for receiving traffic and health check from GCP GFEs
 resource "google_compute_firewall" "allow_lb_health_check_from_gcp_ingress" {
   project = var.project_id
 
-  # necessary for kubernetes ingress (Application (Classic)). GCE ingress for example.
   name        = "allow-lb-health-check-from-gcp-ingress"
   network     = local.network
   description = "Allow ingress traffic from GCP Load balancer health check (managed by terraform)"
 
-  target_tags   = ["allow-lb-health-check-from-gcp"]
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "209.85.152.0/22", "209.85.204.0/22"]
+  target_tags = ["allow-lb-health-check-from-gcp"]
+
+  # Allow traffic from GFEs IPs and GCP LB health check (https://cloud.google.com/docs/security/infrastructure/design#google-frontend-service)
+  # https://cloud.google.com/load-balancing/docs/health-check-concepts#ip-ranges
+  source_ranges = [
+    # Load Balancers (except network load balancer)
+    "130.211.0.0/22",
+    "35.191.0.0/16",
+
+    # External passthrough Network Load Balancers
+    "209.85.152.0/22",
+    "209.85.204.0/22"
+  ]
 
   priority  = "1000"
   direction = "INGRESS"
@@ -148,10 +163,10 @@ resource "google_compute_firewall" "allow_lb_health_check_from_gcp_ingress" {
   }
 }
 
+# Necessary for ingress-nginx
 resource "google_compute_firewall" "allow_nginx_webhook_admission_from_k8s_master_ingress" {
   project = var.project_id
 
-  # necessary for nginx ingress to work.
   name        = "allow-nginx-webhook-admission-from-k8s-master-ingress"
   network     = local.network
   description = "Allow kubernetes (private) master to communicate with nginx webhook admission (managed by terraform)"

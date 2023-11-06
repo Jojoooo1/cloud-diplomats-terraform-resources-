@@ -13,13 +13,15 @@ locals {
   }
 }
 
+# TODO compare firewall with IAM and without IAM
+
 
 /******************************************
   Kubernetes configuration https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/private-cluster
  *****************************************/
 module "gke" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-  version = "28.0.0"
+  version = "29.0.0"
 
   project_id = var.project_id
   name       = local.gke_name

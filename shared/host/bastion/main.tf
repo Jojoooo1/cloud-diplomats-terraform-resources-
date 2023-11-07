@@ -74,6 +74,7 @@ module "bastion_with_iap" {
   tags   = ["allow-igw", "allow-ssh-from-iap", "allow-all-egress"]
 }
 
+# uncomment if want to use the bastion host to connect to the Cloud SQL instance
 # resource "google_project_iam_binding" "store_user" {
 #   project = var.service_dev_project_id
 #   role    = "roles/cloudsql.client"

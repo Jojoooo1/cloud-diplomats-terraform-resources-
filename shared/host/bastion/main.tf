@@ -3,7 +3,7 @@ locals {
   network        = data.terraform_remote_state.network.outputs.network_self_link
   private_subnet = data.terraform_remote_state.network.outputs.subnets["us-east1/cloud-dpl-vpc-dev-us-east1-private"].self_link
 
-  # service_dev_project_id = var.service_dev_project_id
+  name = "bastion-host-dev"
 
   common_labels = {
     owned-by   = "platform"
@@ -29,8 +29,8 @@ module "bastion_with_iap" {
   # UPDATE TO FALSE FOR PRODUCTION
   preemptible = true
 
-  name                 = var.name
-  service_account_name = var.name
+  name                 = local.name
+  service_account_name = local.name
   create_firewall_rule = false # already create in the firewall folder
   machine_type         = "e2-micro"
   disk_size_gb         = 10

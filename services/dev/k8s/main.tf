@@ -72,7 +72,7 @@ module "gke" {
   dns_cache                            = false
   monitoring_enable_managed_prometheus = false
   enable_cost_allocation               = true
-  # enable_gcfs                          = true # not present for private cluster
+  # enable_gcfs                          = true # not present for private cluster module yet.
 
   create_service_account = true
   grant_registry_access  = true
@@ -91,9 +91,8 @@ module "gke" {
       min_count          = 1
       max_count          = 2
 
-      spot = false
       # Update to false for production
-      preemptible = true
+      spot = true
 
       auto_upgrade = false
       auto_repair  = true
@@ -115,7 +114,6 @@ module "gke" {
       "allow-igw",
       "allow-ssh-from-iap",
       "allow-all-egress",
-
 
       # Those are necessary since GCP service project does not have permission to create firewall rules automatically in host project
       "allow-http-ingress",

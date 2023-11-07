@@ -1,0 +1,8 @@
+project_id         = "xxxxxxx"
+project_dns_id     = "xxxxxxx"
+network_project_id = "xxxxxxx"
+
+region     = "us-east1"
+zone       = "us-east1-b"
+
+master_ipv4_cidr_block = "192.168.0.0/28"

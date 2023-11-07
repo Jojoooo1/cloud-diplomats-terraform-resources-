@@ -9,7 +9,6 @@ locals {
 /******************************************
   Regional IP configuration
  *****************************************/
-
 # Service of type load balancer (like ingress nginx) create a passthrough network load balancer (https://cloud.google.com/load-balancing/docs/choosing-load-balancer#lb-summary)
 # This load balancer is a regional resource, and is associated with a single region.
 
@@ -28,7 +27,6 @@ module "static_ip_regional_ingress_nginx" {
 
 }
 
-
 /******************************************
   Global IP configuration
  *****************************************/
@@ -46,8 +44,8 @@ module "static_ip_global_ingress_argo" {
   # dns_domain       = "cloud-diplomats.com"
   # dns_managed_zone = "cloud-diplomats-com"
 
-  # Warning: do not update name convention or it will break the ingress IP annotations in ArgoCD
-  # ${ARGOCD_ENV_PROJECT}-k8s-ingress-argo
+  # Warning: do not update naming convention or it will break the GKE Ingresses annotations:
+  # kubernetes.io/ingress.global-static-ip-name: "${ARGOCD_ENV_PROJECT}-k8s-ingress-argo"
   names = [
     "${var.project_id}-k8s-ingress-argo"
   ]

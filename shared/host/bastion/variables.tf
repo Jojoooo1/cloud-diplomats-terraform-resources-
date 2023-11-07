@@ -1,9 +1,9 @@
 variable "project_id" {
-  description = "The project ID for the network"
+  description = "The project ID"
   type        = string
 }
 
-variable "region" {
-  description = "The region for subnetworks in the network"
+variable "zone" {
+  description = "The zone for the bastion instance"
   type        = string
 }

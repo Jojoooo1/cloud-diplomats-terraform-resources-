@@ -16,6 +16,7 @@ locals {
   Bastion host
   SSH: gcloud compute ssh --project="<your-project>" --zone="us-east1-b" bastion-host-dev --tunnel-through-iap
   SQL: gcloud compute ssh --project="<your-project>" --zone="us-east1-b" bastion-host-dev --tunnel-through-iap -- '/usr/local/bin/cloud_sql_proxy --private-ip --address 0.0.0.0 <your-connection-name>' 
+  GKE: gcloud compute ssh --project="<your-project>" --zone="us-east1-b" bastion-host-dev --tunnel-through-iap -- -L8888:127.0.0.1:8888
  *****************************************/
 module "bastion_with_iap" {
   source  = "terraform-google-modules/bastion-host/google"
@@ -23,10 +24,9 @@ module "bastion_with_iap" {
 
   project = var.project_id
   network = local.network
-  zone    = "us-east1-b"
   subnet  = local.private_subnet
+  zone    = var.zone
 
-  # UPDATE TO FALSE FOR PRODUCTION
   preemptible = true
 
   name                 = local.name
@@ -70,8 +70,8 @@ module "bastion_with_iap" {
   #   "user:jonathan@cloud-diplomats.com" 
   # ]
 
-  labels = local.common_labels
   tags   = ["allow-igw", "allow-ssh-from-iap", "allow-all-egress"]
+  labels = local.common_labels
 }
 
 # uncomment if want to use the bastion host to connect to the Cloud SQL instance

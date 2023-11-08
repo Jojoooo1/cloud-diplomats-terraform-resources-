@@ -37,29 +37,31 @@ module "bastion_with_iap" {
   startup_script       = <<-EOF
     #!/bin/bash
 
+    echo "****************************************************************"
+    echo "Starting bastion host startup_script:"
+    echo "****************************************************************"
     sudo apt-get update -y
-    sudo apt install wget
 
     echo "****************************************************************"
-    echo "installing cloud-ops-agent:"
+    echo "Installing cloud-ops-agent:"
     echo "****************************************************************"
-    curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+    curl -SLO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
     sudo bash add-google-cloud-ops-agent-repo.sh --also-install
 
     echo "****************************************************************"
-    echo "installing Cloud SQL proxy:"
+    echo "Installing Cloud SQL proxy:"
     echo "****************************************************************"
-    sudo wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.7.1/cloud-sql-proxy.linux.amd64 -O cloud_sql_proxy
+    curl -SL -o cloud_sql_proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.7.1/cloud-sql-proxy.linux.amd64
     sudo chmod +x cloud_sql_proxy
     sudo mv cloud_sql_proxy /usr/local/bin
 
     echo "****************************************************************"
-    echo "installing PSQL Client: (not recommended, only used for debugging)" 
+    echo "Installing PSQL Client: (not recommended, only used for debugging)" 
     echo "****************************************************************"
     sudo apt-get install -y postgresql-client
 
     echo "****************************************************************"
-    echo "installing tinyproxy:"
+    echo "Installing tinyproxy:"
     echo "****************************************************************"
     sudo apt-get install -y tinyproxy
 

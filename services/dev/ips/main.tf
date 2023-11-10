@@ -56,6 +56,26 @@ module "static_ip_global_ingress_argo" {
 
 }
 
+module "static_ip_global_ingress_keycloak" {
+  source  = "terraform-google-modules/address/google"
+  version = "3.1.3"
+
+  project_id   = var.project_id
+  region       = var.region
+  address_type = "EXTERNAL"
+  global       = true
+
+  # enable_cloud_dns = true
+  # dns_project      = "var.dns_project_id"
+  # dns_domain       = "cloud-diplomats.com"
+  # dns_managed_zone = "cloud-diplomats-com"
+
+  names = [
+    "${var.project_id}-k8s-ingress-keycloak"
+  ]
+
+}
+
 module "static_ip_global_ingress_rabbitmq" {
   source  = "terraform-google-modules/address/google"
   version = "3.1.3"

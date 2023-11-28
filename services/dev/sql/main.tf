@@ -16,10 +16,10 @@ locals {
 
 module "postgres" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
-  version = "17.0.0"
+  version = "17.1.0"
 
   project_id           = var.project_id
-  name                 = "test"
+  name                 = "cloud-diplomats-dev"
   random_instance_name = true
 
   region = var.region
@@ -32,15 +32,26 @@ module "postgres" {
   availability_type   = "ZONAL"      # use "REGIONAL" if you want to have HA
   disk_autoresize     = true
   deletion_protection = false # block terraform to delete the database
+  # deletion_protection_enabled = true # enable for production
 
   # Database
-  enable_default_db = true
-  db_name           = "api"
+  enable_default_db = false
+  additional_databases = [{
+    name = "api"
+  }]
 
   # Users
-  enable_default_user = true
-  user_name           = "user"
-  user_password       = var.password
+  enable_default_user = false
+  additional_users = [{
+    name     = "user"
+    password = "password"
+  }]
+
+  # Read replica
+  read_replicas = []
+
+  # Feature
+  data_cache_enabled = false # enable for read intensive application with ENTERPRISE_PLUS edition
 
   # Insights
   insights_config = {
@@ -74,7 +85,7 @@ module "postgres" {
     location         = "us"
 
     point_in_time_recovery_enabled = false
-    transaction_log_retention_days = "3"
+    # transaction_log_retention_days = "3"
   }
 
   # Use https://pgtune.leopard.in.ua to tune the initial configuration

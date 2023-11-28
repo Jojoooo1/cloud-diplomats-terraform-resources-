@@ -14,7 +14,7 @@ locals {
 
 module "static_ip_regional_ingress_nginx" {
   source  = "terraform-google-modules/address/google"
-  version = "3.1.3"
+  version = "3.2.0"
 
   project_id   = var.project_id
   region       = var.region
@@ -32,7 +32,7 @@ module "static_ip_regional_ingress_nginx" {
  *****************************************/
 module "static_ip_global_ingress_argo" {
   source  = "terraform-google-modules/address/google"
-  version = "3.1.3"
+  version = "3.2.0"
 
   project_id   = var.project_id
   region       = var.region
@@ -58,7 +58,7 @@ module "static_ip_global_ingress_argo" {
 
 module "static_ip_global_ingress_keycloak" {
   source  = "terraform-google-modules/address/google"
-  version = "3.1.3"
+  version = "3.2.0"
 
   project_id   = var.project_id
   region       = var.region
@@ -78,7 +78,7 @@ module "static_ip_global_ingress_keycloak" {
 
 module "static_ip_global_ingress_rabbitmq" {
   source  = "terraform-google-modules/address/google"
-  version = "3.1.3"
+  version = "3.2.0"
 
   project_id   = var.project_id
   region       = var.region
